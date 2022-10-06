@@ -11,6 +11,10 @@ final class ImagesListCell: UITableViewCell {
 
     static let reuseIdentifier = "ImagesListCell"
 
+    @IBOutlet var contentImage: UIImageView!
+    @IBOutlet var dateLabel: UILabel!
+    @IBOutlet var likeButton: UIButton!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
