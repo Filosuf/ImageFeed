@@ -24,13 +24,13 @@
                         </tabBarAppearance>
                     </tabBar>
                     <connections>
-                        <segue destination="NNs-4v-f7P" kind="relationship" relationship="viewControllers" id="y4j-OS-uBV"/>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="y6u-JV-c33"/>
                         <segue destination="Bym-FV-l44" kind="relationship" relationship="viewControllers" id="tEa-na-Ylx"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="h9p-0H-23d" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1735" y="-317"/>
+            <point key="canvasLocation" x="-909" y="-300"/>
         </scene>
         <!--ImageList-->
         <scene sceneID="tne-QT-ifu">
@@ -111,6 +111,7 @@
                             <constraint firstAttribute="bottom" secondItem="VDL-b5-AHQ" secondAttribute="bottom" id="yP0-dL-XvY"/>
                         </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" title="" image="tab_editorial_active" id="bbZ-5P-tbD"/>
                     <navigationItem key="navigationItem" id="wg3-HB-pyq"/>
                     <connections>
                         <segue destination="I2T-pb-lHc" kind="presentation" identifier="ShowSingleImage" id="j6z-LW-g33"/>
@@ -260,31 +261,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJx-4N-hrG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-693" y="104"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="rWO-pH-jqE">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="NNs-4v-f7P" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="tab_editorial_active" id="UV9-b8-gs6"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="LoV-nJ-nJc">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" name="YP White"/>
-                        <color key="barTintColor" name="YP White"/>
-                        <navigationBarAppearance key="standardAppearance">
-                            <color key="backgroundColor" name="YP Black"/>
-                        </navigationBarAppearance>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="Avd-yj-rDS"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="yJX-0i-EQO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-694.20289855072474" y="-667.63392857142856"/>
+            <point key="canvasLocation" x="216" y="86"/>
         </scene>
     </scenes>
     <resources>
@@ -292,7 +269,7 @@
         <image name="18" width="200" height="300"/>
         <image name="Backward" width="24" height="24"/>
         <image name="Photo" width="70" height="70"/>
-        <image name="favorites.fill" width="30" height="26"/>
+        <image name="favorites.fill" width="29" height="26"/>
         <image name="ipad.and.arrow.forward" width="20" height="22"/>
         <image name="share_button" width="50" height="50"/>
         <image name="tab_editorial_active" width="20" height="22"/>
