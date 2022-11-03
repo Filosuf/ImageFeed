@@ -7,6 +7,16 @@
 
 import UIKit
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
 
+    // MARK: - Properties
+    @IBOutlet private var avatarImageView: UIImageView!
+    @IBOutlet private var nameLabel: UILabel!
+    @IBOutlet private var loginNameLabel: UILabel!
+    @IBOutlet private var descriptionLabel: UILabel!
+    @IBOutlet private var logoutButton: UIButton!
+
+    // MARK: - Methods
+    @IBAction private func didTapLogoutButton(_ sender: UIButton) {
+    }
 }

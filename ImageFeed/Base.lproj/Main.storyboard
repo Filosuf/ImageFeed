@@ -185,10 +185,10 @@
             </objects>
             <point key="canvasLocation" x="975.36231884057975" y="-666.29464285714278"/>
         </scene>
-        <!--View Controller-->
+        <!--Profile View Controller-->
         <scene sceneID="dbi-1w-MKw">
             <objects>
-                <viewController id="Bym-FV-l44" sceneMemberID="viewController">
+                <viewController id="Bym-FV-l44" customClass="ProfileViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="srX-u6-Zow">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -201,13 +201,16 @@
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hh7-4O-fU7" userLabel="Logout Button">
-                                <rect key="frame" x="366" y="100" width="24" height="24"/>
+                                <rect key="frame" x="366" y="99" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="iv9-Fp-RCk"/>
                                     <constraint firstAttribute="width" constant="24" id="uEf-BJ-gdr"/>
                                 </constraints>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="ipad.and.arrow.forward"/>
+                                <connections>
+                                    <action selector="didTapLogoutButton:" destination="Bym-FV-l44" eventType="touchUpInside" id="VVV-hQ-qrz"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Екатерина Новикова" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QG5-g3-G67" userLabel="Name Label">
                                 <rect key="frame" x="16" y="154" width="382" height="28"/>
@@ -236,7 +239,7 @@
                             <constraint firstItem="QG5-g3-G67" firstAttribute="leading" secondItem="mVI-fS-yys" secondAttribute="leading" constant="16" id="JKE-aN-768"/>
                             <constraint firstItem="QG5-g3-G67" firstAttribute="top" secondItem="fIU-aL-wue" secondAttribute="bottom" constant="8" id="P6M-uB-61G"/>
                             <constraint firstItem="mVI-fS-yys" firstAttribute="trailing" secondItem="8yh-MJ-wPc" secondAttribute="trailing" constant="16" id="UZH-Ob-lTT"/>
-                            <constraint firstItem="hh7-4O-fU7" firstAttribute="top" secondItem="mVI-fS-yys" secondAttribute="top" constant="56" id="WDd-cb-HfW"/>
+                            <constraint firstItem="hh7-4O-fU7" firstAttribute="top" secondItem="mVI-fS-yys" secondAttribute="top" constant="55" id="WDd-cb-HfW"/>
                             <constraint firstItem="GcB-PN-KL4" firstAttribute="top" secondItem="8yh-MJ-wPc" secondAttribute="bottom" constant="8" id="bet-Oy-sVd"/>
                             <constraint firstItem="fIU-aL-wue" firstAttribute="top" secondItem="mVI-fS-yys" secondAttribute="top" constant="32" id="eNl-LL-Sak"/>
                             <constraint firstItem="8yh-MJ-wPc" firstAttribute="top" secondItem="QG5-g3-G67" secondAttribute="bottom" constant="8" id="fEx-Pp-9Dc"/>
@@ -247,6 +250,13 @@
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="k5J-M5-XPg"/>
+                    <connections>
+                        <outlet property="avatarImageView" destination="fIU-aL-wue" id="rjh-9k-udV"/>
+                        <outlet property="descriptionLabel" destination="GcB-PN-KL4" id="cNp-q8-tk8"/>
+                        <outlet property="loginNameLabel" destination="8yh-MJ-wPc" id="SPv-s0-Gon"/>
+                        <outlet property="logoutButton" destination="hh7-4O-fU7" id="x3S-Dr-1tj"/>
+                        <outlet property="nameLabel" destination="QG5-g3-G67" id="8SR-m0-8ys"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJx-4N-hrG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
