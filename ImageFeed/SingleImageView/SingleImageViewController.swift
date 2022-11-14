@@ -65,4 +65,19 @@ extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         imageView
     }
+
+//    func scrollViewDidEndZooming() {
+////        rescaleAndCenterImageInScrollView(image: image)
+//        print("центрирование")
+//    }
+
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        let visibleRectSize = scrollView.bounds.size
+        let newContentSize = scrollView.contentSize
+        let x = (newContentSize.width - visibleRectSize.width) / 2
+        let y = (newContentSize.height - visibleRectSize.height) / 2
+        print("x = \(x); y = \(y)")
+        scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
+        print("центрирование")
+    }
 }
