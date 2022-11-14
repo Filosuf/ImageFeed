@@ -66,18 +66,26 @@ extension SingleImageViewController: UIScrollViewDelegate {
         imageView
     }
 
-//    func scrollViewDidEndZooming() {
-////        rescaleAndCenterImageInScrollView(image: image)
-//        print("центрирование")
-//    }
+    func centerImage() {
+        let boundsSize = scrollView.bounds.size
+        var frameToCenter = imageView.frame
 
-    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
-        let visibleRectSize = scrollView.bounds.size
-        let newContentSize = scrollView.contentSize
-        let x = (newContentSize.width - visibleRectSize.width) / 2
-        let y = (newContentSize.height - visibleRectSize.height) / 2
-        print("x = \(x); y = \(y)")
-        scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
-        print("центрирование")
+        if frameToCenter.size.width < boundsSize.width {
+            frameToCenter.origin.x = (boundsSize.width - frameToCenter.size.width) / 2
+        } else {
+            frameToCenter.origin.x = 0
+        }
+
+        if frameToCenter.size.height < boundsSize.height {
+            frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2
+        } else {
+            frameToCenter.origin.y = 0
+        }
+
+        imageView.frame = frameToCenter
     }
+
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            self.centerImage()
+        }
 }
