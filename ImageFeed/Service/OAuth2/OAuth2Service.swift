@@ -8,12 +8,18 @@
 import Foundation
 
 protocol OAuth2ServiceProtocol {
-    func fetchAuthToken(with code: String, completion: @escaping (Result<Data, Error>) -> Void)
+    func fetchAuthToken(with code: String, completion: @escaping (Result<String, Error>) -> Void)
+}
+
+enum NetworkError: Error {
+    case responseError
+    case decodeError
 }
 
 final class OAuth2Service: OAuth2ServiceProtocol {
-
-    func fetchAuthToken(with code: String, completion: @escaping (Result<Data, Error>) -> Void) {
+    
+    func fetchAuthToken(with code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        var resultToken = ""
 
         var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")!
         urlComponents.queryItems = [
@@ -41,15 +47,36 @@ final class OAuth2Service: OAuth2ServiceProtocol {
             // Проверяем, что нам пришёл успешный код ответа
             if let response = response as? HTTPURLResponse,
                response.statusCode < 200 && response.statusCode >= 300 {
-                //completion(.failure(NetworkError.codeError))
-                completion(.failure(error!))
+                completion(.failure(NetworkError.responseError))
                 return
             }
 
-            // Возвращаем данные
+            // Декодируем полученные данные
             guard let data = data else { return }
-            completion(.success(data))
+            self.decoding(data: data) { result in
+                switch result {
+                case .success(let token):
+                    resultToken = token
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+
+            // Возвращаем данные
+            DispatchQueue.main.async {
+                completion(.success(resultToken))
+            }
         }
         task.resume()
+    }
+
+    private func decoding(data: Data, completion: @escaping (Result<String, Error>) -> Void) {
+        do {
+            let responseBody = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
+            completion(.success(responseBody.accessToken))
+        } catch {
+            print("Error decode OAuthTokenResponseBody from data")
+            completion(.failure(NetworkError.decodeError))
+        }
     }
 }

@@ -38,22 +38,16 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        print("accept CODE = \(code)")
         authService.fetchAuthToken(with: code) {  [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success(let data):
-                do {
-                    let responseBody = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                    OAuth2TokenStorage().token = responseBody.accessToken
-                    print(responseBody.accessToken)
-                    DispatchQueue.main.async { [weak self] in
-                        guard let self = self else { return }
-                        self.delegate?.authViewController(self, didAuthenticateWithCode: responseBody.accessToken)
-                    }
-                } catch {
-                    print("Error decode OAuthTokenResponseBody from data")
-                }
+            case .success(let accessToken):
+                OAuth2TokenStorage().token = accessToken
+                self.delegate?.authViewController(self, didAuthenticateWithCode: accessToken)
+//                DispatchQueue.main.async { [weak self] in
+//                    guard let self = self else { return }
+//                    self.delegate?.authViewController(self, didAuthenticateWithCode: accessToken)
+//                }
             case .failure(let error):
                 print("Error = \(error.localizedDescription)")
             }
