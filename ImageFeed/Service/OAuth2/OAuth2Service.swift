@@ -19,8 +19,6 @@ enum NetworkError: Error {
 final class OAuth2Service: OAuth2ServiceProtocol {
     
     func fetchAuthToken(with code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        var resultToken = ""
-
         var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")!
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: AccessKey),
@@ -53,30 +51,29 @@ final class OAuth2Service: OAuth2ServiceProtocol {
 
             // Декодируем полученные данные
             guard let data = data else { return }
-            self.decoding(data: data) { result in
-                switch result {
-                case .success(let token):
-                    resultToken = token
-                case .failure(let error):
-                    completion(.failure(error))
+            let resultDecoding = self.decoding(data: data)
+
+            switch resultDecoding {
+            case .success(let token):
+                // Возвращаем данные
+                DispatchQueue.main.async {
+                    completion(.success(token))
                 }
+            case .failure(let error):
+                completion(.failure(error))
             }
 
-            // Возвращаем данные
-            DispatchQueue.main.async {
-                completion(.success(resultToken))
-            }
         }
         task.resume()
     }
 
-    private func decoding(data: Data, completion: @escaping (Result<String, Error>) -> Void) {
+    private func decoding(data: Data) -> Result<String, Error>{
         do {
             let responseBody = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-            completion(.success(responseBody.accessToken))
+            return .success(responseBody.accessToken)
         } catch {
             print("Error decode OAuthTokenResponseBody from data")
-            completion(.failure(NetworkError.decodeError))
+            return.failure(NetworkError.decodeError)
         }
     }
 }
