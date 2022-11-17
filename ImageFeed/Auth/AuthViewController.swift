@@ -14,7 +14,6 @@ protocol AuthViewControllerDelegate: AnyObject {
 final class AuthViewController: UIViewController {
     // MARK: - Properties
     private let identifier = "ShowWebView"
-    private let authService: OAuth2ServiceProtocol = OAuth2Service()
     weak var delegate: AuthViewControllerDelegate?
     private var bearerToken = ""
 
@@ -38,16 +37,7 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        authService.fetchAuthToken(with: code) {  [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let accessToken):
-                OAuth2TokenStorage().token = accessToken
-                self.delegate?.authViewController(self, didAuthenticateWithCode: accessToken)
-            case .failure(let error):
-                print("Error = \(error.localizedDescription)")
-            }
-        }
+        delegate?.authViewController(self, didAuthenticateWithCode: code)
     }
 
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {

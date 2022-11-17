@@ -6,9 +6,12 @@
 //
 
 import UIKit
+import ProgressHUD
 
 final class SplashViewController: UIViewController {
-
+    // MARK: - Properties
+    private let authService: OAuth2ServiceProtocol = OAuth2Service()
+    
     // MARK: - LifeCycle
     private let showAuthVCIdentifier = "ShowAuthVC"
 
@@ -65,6 +68,31 @@ final class SplashViewController: UIViewController {
 // MARK: - AuthViewControllerDelegate
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        switchToTabBarController()
+        dismiss(animated: true) { [weak self] in
+            ProgressHUD.show()
+            guard let self = self else { return }
+//            self.fetchOAuthToken(code)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            // код, который вы хотите вызвать через 1 секунду,
+            // в нашем случае это просто функция showNextQuestionOrResults()
+                self.fetchOAuthToken(code)
+            }
+        }
     }
+
+    private func fetchOAuthToken(_ code: String) {
+        authService.fetchAuthToken(with: code) { [weak self] result in
+            ProgressHUD.dismiss()
+            guard let self = self else { return }
+            switch result {
+            case .success(let accessToken):
+                ProgressHUD.dismiss()
+//                OAuth2TokenStorage().token = accessToken
+                self.switchToTabBarController()
+            case .failure(let error):
+                print("Error = \(error.localizedDescription)")
+            }
+        }
+    }
+
 }
