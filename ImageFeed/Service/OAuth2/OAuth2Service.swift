@@ -17,7 +17,10 @@ enum NetworkError: Error {
 }
 
 final class OAuth2Service: OAuth2ServiceProtocol {
-    
+    // MARK: - Properties
+    private var task: URLSessionTask?
+    private var lastCode: String?
+
     func fetchAuthToken(with code: String, completion: @escaping (Result<String, Error>) -> Void) {
         var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")!
         urlComponents.queryItems = [
@@ -29,6 +32,11 @@ final class OAuth2Service: OAuth2ServiceProtocol {
         ]
         let url = urlComponents.url!
 
+        assert(Thread.isMainThread)
+        if lastCode == code { return }
+        task?.cancel()
+        lastCode = code
+
         var request = URLRequest(
             url: url,
             cachePolicy: .reloadIgnoringLocalCacheData
@@ -38,6 +46,7 @@ final class OAuth2Service: OAuth2ServiceProtocol {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             // Проверяем, пришла ли ошибка
             if let error = error {
+                self.lastCode = nil
                 completion(.failure(error))
                 return
             }
@@ -45,6 +54,7 @@ final class OAuth2Service: OAuth2ServiceProtocol {
             // Проверяем, что нам пришёл успешный код ответа
             if let response = response as? HTTPURLResponse,
                response.statusCode < 200 && response.statusCode >= 300 {
+                self.lastCode = nil
                 completion(.failure(NetworkError.responseError))
                 return
             }
@@ -60,10 +70,12 @@ final class OAuth2Service: OAuth2ServiceProtocol {
                     completion(.success(token))
                 }
             case .failure(let error):
+                self.lastCode = nil
                 completion(.failure(error))
             }
 
         }
+        self.task = task
         task.resume()
     }
 

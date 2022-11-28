@@ -11,17 +11,21 @@ import ProgressHUD
 final class SplashViewController: UIViewController {
     // MARK: - Properties
     private let authService: OAuth2ServiceProtocol = OAuth2Service()
-    
-    // MARK: - LifeCycle
+    private let profileService = ProfileService.shared
     private let showAuthVCIdentifier = "ShowAuthVC"
 
     // MARK: - LifeCycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         startAplication()
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        //так как viewDidAppear срабатывает при изменении window.rootViewController, необходимо дополнительно скрыть индикатор
+        UIBlockingProgressHUD.dismiss()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -45,7 +49,9 @@ final class SplashViewController: UIViewController {
     private func startAplication() {
         if let token = OAuth2TokenStorage().token {
             print("token found = \(token)")
-            switchToTabBarController()
+            //так как viewDidAppear срабатывает при изменении window.rootViewController, необходимо дополнительно скрыть индикатор
+            UIBlockingProgressHUD.show()
+            getProfile(with: token)
         } else {
             print("token not found")
             performSegue(withIdentifier: showAuthVCIdentifier, sender: nil)
@@ -68,31 +74,39 @@ final class SplashViewController: UIViewController {
 // MARK: - AuthViewControllerDelegate
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        dismiss(animated: true) { [weak self] in
-            ProgressHUD.show()
+        vc.dismiss(animated: true) { [weak self] in
+            UIBlockingProgressHUD.show()
             guard let self = self else { return }
-//            self.fetchOAuthToken(code)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-            // код, который вы хотите вызвать через 1 секунду,
-            // в нашем случае это просто функция showNextQuestionOrResults()
-                self.fetchOAuthToken(code)
-            }
+            self.fetchOAuthToken(code)
         }
     }
 
     private func fetchOAuthToken(_ code: String) {
         authService.fetchAuthToken(with: code) { [weak self] result in
-            ProgressHUD.dismiss()
             guard let self = self else { return }
             switch result {
             case .success(let accessToken):
-                ProgressHUD.dismiss()
-//                OAuth2TokenStorage().token = accessToken
-                self.switchToTabBarController()
+                OAuth2TokenStorage().token = accessToken
+                self.getProfile(with: accessToken)
             case .failure(let error):
+                UIBlockingProgressHUD.dismiss()
                 print("Error = \(error.localizedDescription)")
             }
         }
     }
 
+    ///Загрузка данных профиля пользователя
+    private func getProfile(with token: String) {
+        profileService.fetchProfile(token) { [weak self] result in
+            guard let self = self else {return}
+
+            UIBlockingProgressHUD.dismiss()
+            switch result {
+            case .success(_):
+                self.switchToTabBarController()
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
 }
