@@ -11,6 +11,7 @@ final class ProfileImageService {
     // MARK: - Properties
     static let shared = ProfileImageService()
 
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     private (set) var avatarURL: String?
     private var task: URLSessionTask?
     private var lastUsername: String?
@@ -58,6 +59,11 @@ final class ProfileImageService {
                 DispatchQueue.main.async {
                     completion(.success(smallProfileImage))
                 }
+                NotificationCenter.default
+                    .post(
+                        name: ProfileImageService.didChangeNotification,
+                        object: self,
+                        userInfo: ["URL": smallProfileImage])                   
             case .failure(let error):
                 self.lastUsername = nil
                 completion(.failure(error))
