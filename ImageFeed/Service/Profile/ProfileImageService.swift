@@ -46,6 +46,9 @@ final class ProfileImageService {
                         userInfo: ["URL": smallProfileImage]) 
             case .failure(let error):
                 self.lastUsername = nil
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }
         self.task = task

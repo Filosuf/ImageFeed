@@ -42,6 +42,9 @@ final class ProfileService {
                 }
             case .failure(let error):
                 self.lastToken = nil
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }
         self.task = task
