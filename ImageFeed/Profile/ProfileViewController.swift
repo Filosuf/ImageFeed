@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
 
@@ -22,7 +23,7 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateProfileDetails(with: profileService.profile)
-
+        addObserverAvatarURL()
     }
     // MARK: - Methods
     @IBAction private func didTapLogoutButton(_ sender: UIButton) {
@@ -42,12 +43,16 @@ final class ProfileViewController: UIViewController {
     }
 
     private func updateAvatar() {
-            guard
-                let profileImageURL = ProfileImageService.shared.avatarURL,
-                let url = URL(string: profileImageURL)
-            else { return }
-            // TODO [Sprint 11] Обновить аватар, используя Kingfisher
-        }
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        let processor = RoundCornerImageProcessor(cornerRadius: avatarImageView.bounds.height/2)
+        avatarImageView.kf.setImage(with: url,
+                                    placeholder: UIImage(named: "avatarPlaceholder.jpeg"),
+                                    options: [.processor(processor)])
+    }
+
     private func updateProfileDetails(with profile: Profile?) {
         guard let profile = profile else { return }
 

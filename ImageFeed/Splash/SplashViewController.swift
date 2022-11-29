@@ -13,6 +13,7 @@ final class SplashViewController: UIViewController {
     private let authService: OAuth2ServiceProtocol = OAuth2Service()
     private let profileService = ProfileService.shared
     private let showAuthVCIdentifier = "ShowAuthVC"
+    private lazy var alertPresenter = AlertPresenter(viewController: self)
 
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -90,6 +91,7 @@ extension SplashViewController: AuthViewControllerDelegate {
                 self.getProfile(with: accessToken)
             case .failure(let error):
                 UIBlockingProgressHUD.dismiss()
+                self.alertPresenter.showErrorAlert(message: "Не удалось войти в систему", action: {})
                 print("Error = \(error.localizedDescription)")
             }
         }
@@ -106,6 +108,7 @@ extension SplashViewController: AuthViewControllerDelegate {
                 ProfileImageService.shared.fetchProfileImageURL(username: profile.username, token: token) { _ in }
                 self.switchToTabBarController()
             case .failure(let error):
+                self.alertPresenter.showErrorAlert(message: "Не удалось войти в систему", action: {})
                 print(error)
             }
         }

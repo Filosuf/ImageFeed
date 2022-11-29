@@ -29,31 +29,11 @@ final class ProfileImageService {
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Проверяем, пришла ли ошибка
-            if let error = error {
-                self.lastUsername = nil
-                completion(.failure(error))
-                return
-            }
-
-            // Проверяем, что нам пришёл успешный код ответа
-            if let response = response as? HTTPURLResponse,
-               response.statusCode < 200 && response.statusCode >= 300 {
-                self.lastUsername = nil
-                completion(.failure(NetworkError.responseError))
-                return
-            }
-            if let response = response as? HTTPURLResponse {
-                print("response code = \(response.statusCode)")
-            }
-            // Декодируем полученные данные
-            guard let data = data else { return }
-            let resultDecoding = self.decoding(data: data)
-
-            switch resultDecoding {
-            case .success(let userResult):
-                let smallProfileImage = userResult.profileImage.small
+        let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
+            guard let self = self else { return }
+            switch result {
+            case .success(let model):
+                let smallProfileImage = model.profileImage.small
                 self.avatarURL = smallProfileImage
                 // Возвращаем данные
                 DispatchQueue.main.async {
@@ -63,25 +43,12 @@ final class ProfileImageService {
                     .post(
                         name: ProfileImageService.didChangeNotification,
                         object: self,
-                        userInfo: ["URL": smallProfileImage])                   
+                        userInfo: ["URL": smallProfileImage]) 
             case .failure(let error):
                 self.lastUsername = nil
-                completion(.failure(error))
             }
-
         }
         self.task = task
         task.resume()
-    }
-
-    private func decoding(data: Data) -> Result<UserResult, Error>{
-        do {
-            let responseBody = try JSONDecoder().decode(UserResult.self, from: data)
-            print(responseBody)
-            return .success(responseBody)
-        } catch {
-            print("Error decode ProfileResult from data")
-            return.failure(NetworkError.decodeError)
-        }
     }
 }

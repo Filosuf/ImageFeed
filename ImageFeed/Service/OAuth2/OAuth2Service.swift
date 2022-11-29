@@ -43,49 +43,19 @@ final class OAuth2Service: OAuth2ServiceProtocol {
         )
         request.httpMethod = "POST"
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Проверяем, пришла ли ошибка
-            if let error = error {
-                self.lastCode = nil
-                completion(.failure(error))
-                return
-            }
-
-            // Проверяем, что нам пришёл успешный код ответа
-            if let response = response as? HTTPURLResponse,
-               response.statusCode < 200 && response.statusCode >= 300 {
-                self.lastCode = nil
-                completion(.failure(NetworkError.responseError))
-                return
-            }
-
-            // Декодируем полученные данные
-            guard let data = data else { return }
-            let resultDecoding = self.decoding(data: data)
-
-            switch resultDecoding {
-            case .success(let token):
+        let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            guard let self = self else { return }
+            switch result {
+            case .success(let model):
                 // Возвращаем данные
                 DispatchQueue.main.async {
-                    completion(.success(token))
+                    completion(.success(model.accessToken))
                 }
             case .failure(let error):
                 self.lastCode = nil
-                completion(.failure(error))
             }
-
         }
         self.task = task
         task.resume()
-    }
-
-    private func decoding(data: Data) -> Result<String, Error>{
-        do {
-            let responseBody = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-            return .success(responseBody.accessToken)
-        } catch {
-            print("Error decode OAuthTokenResponseBody from data")
-            return.failure(NetworkError.decodeError)
-        }
     }
 }

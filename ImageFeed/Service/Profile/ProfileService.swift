@@ -30,28 +30,11 @@ final class ProfileService {
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Проверяем, пришла ли ошибка
-            if let error = error {
-                self.lastToken = nil
-                completion(.failure(error))
-                return
-            }
-
-            // Проверяем, что нам пришёл успешный код ответа
-            if let response = response as? HTTPURLResponse,
-               response.statusCode < 200 && response.statusCode >= 300 {
-                self.lastToken = nil
-                completion(.failure(NetworkError.responseError))
-                return
-            }
-            // Декодируем полученные данные
-            guard let data = data else { return }
-            let resultDecoding = self.decoding(data: data)
-
-            switch resultDecoding {
-            case .success(let profileResult):
-                let profile = Profile(profileResult: profileResult)
+        let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
+            guard let self = self else { return }
+            switch result {
+            case .success(let model):
+                let profile = Profile(profileResult: model)
                 self.profile = profile
                 // Возвращаем данные
                 DispatchQueue.main.async {
@@ -59,21 +42,9 @@ final class ProfileService {
                 }
             case .failure(let error):
                 self.lastToken = nil
-                completion(.failure(error))
             }
-
         }
         self.task = task
         task.resume()
-    }
-
-    private func decoding(data: Data) -> Result<ProfileResult, Error>{
-        do {
-            let responseBody = try JSONDecoder().decode(ProfileResult.self, from: data)
-            return .success(responseBody)
-        } catch {
-            print("Error decode ProfileResult from data")
-            return.failure(NetworkError.decodeError)
-        }
     }
 }
