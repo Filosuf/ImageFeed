@@ -23,7 +23,7 @@ final class ProfileService {
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
 
         assert(Thread.isMainThread)
-        if lastToken == token { return }
+        if lastToken == token {  return }
         task?.cancel()
         lastToken = token
         let url = URL(string: "https://api.unsplash.com/me")!

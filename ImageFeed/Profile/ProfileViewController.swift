@@ -13,7 +13,6 @@ final class ProfileViewController: UIViewController {
     // MARK: - Properties
     private let profileService = ProfileService.shared
 
-    private var profileImageServiceObserver: NSObjectProtocol?
     @IBOutlet private var avatarImageView: UIImageView!
     @IBOutlet private var nameLabel: UILabel!
     @IBOutlet private var loginNameLabel: UILabel!
@@ -30,14 +29,13 @@ final class ProfileViewController: UIViewController {
     }
 
     private func addObserverAvatarURL() {
-        profileImageServiceObserver = NotificationCenter.default
+        NotificationCenter.default
             .addObserver(
                 forName: ProfileImageService.didChangeNotification,
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
+                self?.updateAvatar()
             }
         updateAvatar()
     }
@@ -47,7 +45,7 @@ final class ProfileViewController: UIViewController {
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let url = URL(string: profileImageURL)
         else { return }
-        let processor = RoundCornerImageProcessor(cornerRadius: avatarImageView.bounds.height/2)
+        let processor = RoundCornerImageProcessor(cornerRadius: avatarImageView.bounds.height / 2)
         avatarImageView.kf.setImage(with: url,
                                     placeholder: UIImage(named: "avatarPlaceholder.jpeg"),
                                     options: [.processor(processor)])

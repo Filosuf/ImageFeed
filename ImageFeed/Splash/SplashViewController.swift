@@ -16,12 +16,9 @@ final class SplashViewController: UIViewController {
     private lazy var alertPresenter = AlertPresenter(viewController: self)
 
     // MARK: - LifeCycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        startAplication()
+        startApplication()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -47,14 +44,12 @@ final class SplashViewController: UIViewController {
     }
 
     // MARK: - Methods
-    private func startAplication() {
+    private func startApplication() {
         if let token = OAuth2TokenStorage().token {
-            print("token found = \(token)")
             //так как viewDidAppear срабатывает при изменении window.rootViewController, необходимо дополнительно скрыть индикатор
             UIBlockingProgressHUD.show()
             getProfile(with: token)
         } else {
-            print("token not found")
             performSegue(withIdentifier: showAuthVCIdentifier, sender: nil)
         }
     }
@@ -89,10 +84,9 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success(let accessToken):
                 OAuth2TokenStorage().token = accessToken
                 self.getProfile(with: accessToken)
-            case .failure(let error):
+            case .failure(_):
                 UIBlockingProgressHUD.dismiss()
-                self.alertPresenter.showErrorAlert(message: "Не удалось войти в систему", action: {})
-                print("Error = \(error.localizedDescription)")
+                self.alertPresenter.showErrorAlert(message: "Не удалось войти в систему", action: { })
             }
         }
     }
@@ -107,9 +101,8 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success(let profile):
                 ProfileImageService.shared.fetchProfileImageURL(username: profile.username, token: token) { _ in }
                 self.switchToTabBarController()
-            case .failure(let error):
+            case .failure(_):
                 self.alertPresenter.showErrorAlert(message: "Не удалось войти в систему", action: {})
-                print(error)
             }
         }
     }

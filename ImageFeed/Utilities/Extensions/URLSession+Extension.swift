@@ -45,7 +45,6 @@ extension URLSession {
             let responseBody = try JSONDecoder().decode(T.self, from: data)
             return .success(responseBody)
         } catch {
-            print("Error decode from data")
             return.failure(NetworkError.decodeError)
         }
     }
