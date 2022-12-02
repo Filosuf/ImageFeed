@@ -6,19 +6,24 @@
 //
 
 import UIKit
+import ProgressHUD
 
 final class SplashViewController: UIViewController {
-
-    // MARK: - LifeCycle
+    // MARK: - Properties
+    private let authService: OAuth2ServiceProtocol = OAuth2Service()
+    private let profileService = ProfileService.shared
     private let showAuthVCIdentifier = "ShowAuthVC"
+    private lazy var alertPresenter = AlertPresenter(viewController: self)
 
     // MARK: - LifeCycle
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        startAplication()
+        startApplication()
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        //так как viewDidAppear срабатывает при изменении window.rootViewController, необходимо дополнительно скрыть индикатор
+        UIBlockingProgressHUD.dismiss()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -39,12 +44,12 @@ final class SplashViewController: UIViewController {
     }
 
     // MARK: - Methods
-    private func startAplication() {
+    private func startApplication() {
         if let token = OAuth2TokenStorage().token {
-            print("token found = \(token)")
-            switchToTabBarController()
+            //так как viewDidAppear срабатывает при изменении window.rootViewController, необходимо дополнительно скрыть индикатор
+            UIBlockingProgressHUD.show()
+            getProfile(with: token)
         } else {
-            print("token not found")
             performSegue(withIdentifier: showAuthVCIdentifier, sender: nil)
         }
     }
@@ -65,6 +70,40 @@ final class SplashViewController: UIViewController {
 // MARK: - AuthViewControllerDelegate
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        switchToTabBarController()
+        vc.dismiss(animated: true) { [weak self] in
+            UIBlockingProgressHUD.show()
+            guard let self = self else { return }
+            self.fetchOAuthToken(code)
+        }
+    }
+
+    private func fetchOAuthToken(_ code: String) {
+        authService.fetchAuthToken(with: code) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let accessToken):
+                OAuth2TokenStorage().token = accessToken
+                self.getProfile(with: accessToken)
+            case .failure(_):
+                UIBlockingProgressHUD.dismiss()
+                self.alertPresenter.showErrorAlert(message: "Не удалось войти в систему", action: { })
+            }
+        }
+    }
+
+    ///Загрузка данных профиля пользователя
+    private func getProfile(with token: String) {
+        profileService.fetchProfile(token) { [weak self] result in
+            guard let self = self else {return}
+
+            UIBlockingProgressHUD.dismiss()
+            switch result {
+            case .success(let profile):
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.username, token: token) { _ in }
+                self.switchToTabBarController()
+            case .failure(_):
+                self.alertPresenter.showErrorAlert(message: "Не удалось войти в систему", action: {})
+            }
+        }
     }
 }
