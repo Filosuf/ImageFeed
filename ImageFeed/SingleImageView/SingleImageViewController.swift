@@ -6,17 +6,24 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
 
     // MARK: - Properties
-    var image: UIImage! {
+    var image: UIImage? {
         didSet {
-            guard isViewLoaded else { return }
-            imageView.image = image
+            guard let image = image, isViewLoaded else { return }
             rescaleAndCenterImageInScrollView(image: image)
         }
     }
+    var fullImageUrl: String? {
+        didSet {
+            guard isViewLoaded else { return }
+            getImage(with: fullImageUrl)
+        }
+    }
+
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var scrollView: UIScrollView!
 
@@ -26,8 +33,7 @@ final class SingleImageViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageView.image = image
-        rescaleAndCenterImageInScrollView(image: image)
+        getImage(with: fullImageUrl)
     }
 
     // MARK: - Methods
@@ -43,10 +49,30 @@ final class SingleImageViewController: UIViewController {
         present(share, animated: true, completion: nil)
     }
 
+    private func getImage(with url: String?) {
+        guard let urlImage = url, let url = URL(string: urlImage) else { return }
+
+        let indicatorCustom = SingleImageIndicator()
+        imageView.kf.indicatorType = .custom(indicator: indicatorCustom)
+
+        imageView.kf.setImage(with: url, placeholder: UIImage(named: "imagePlaceholder"), options: []) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    self.image = data.image
+                }
+            case .failure:
+                return
+            }
+        }
+    }
+
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         scrollView.minimumZoomScale = minZoomScale
         scrollView.maximumZoomScale = maxZoomScale
         let visibleRectSize = scrollView.bounds.size
+        print(visibleRectSize)
         let imageSize = image.size
         let hScale = visibleRectSize.width / imageSize.width
         let vScale = visibleRectSize.height / imageSize.height
@@ -66,26 +92,26 @@ extension SingleImageViewController: UIScrollViewDelegate {
         imageView
     }
 
-    func centerImage() {
-        let boundsSize = scrollView.bounds.size
-        var frameToCenter = imageView.frame
-
-        if frameToCenter.size.width < boundsSize.width {
-            frameToCenter.origin.x = (boundsSize.width - frameToCenter.size.width) / 2
-        } else {
-            frameToCenter.origin.x = 0
-        }
-
-        if frameToCenter.size.height < boundsSize.height {
-            frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2
-        } else {
-            frameToCenter.origin.y = 0
-        }
-
-        imageView.frame = frameToCenter
-    }
-
-    func scrollViewDidZoom(_ scrollView: UIScrollView) {
-            self.centerImage()
-        }
+//    func centerImage() {
+//        let boundsSize = scrollView.bounds.size
+//        var frameToCenter = imageView.frame
+//
+//        if frameToCenter.size.width < boundsSize.width {
+//            frameToCenter.origin.x = (boundsSize.width - frameToCenter.size.width) / 2
+//        } else {
+//            frameToCenter.origin.x = 0
+//        }
+//
+//        if frameToCenter.size.height < boundsSize.height {
+//            frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2
+//        } else {
+//            frameToCenter.origin.y = 0
+//        }
+//
+//        imageView.frame = frameToCenter
+//    }
+//
+//    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+//            self.centerImage()
+//        }
 }

@@ -31,8 +31,8 @@ final class ImagesListViewController: UIViewController {
             if segue.identifier == singleImageIdentifier {
                 let viewController = segue.destination as! SingleImageViewController
                 let indexPath = sender as! IndexPath
-                let image = UIImage(named: photosName[indexPath.row])
-                viewController.image = image
+                let photo = photos[indexPath.row]
+                viewController.fullImageUrl = photo.largeImageURL
             } else {
                 super.prepare(for: segue, sender: sender)
             }
@@ -47,7 +47,6 @@ final class ImagesListViewController: UIViewController {
                 queue: .main
             ) { [weak self] _ in
                 guard let self = self else { return }
-                print("Сработала нотификация, получен список изображений")
                 self.updateTableViewAnimated()
             }
     }
@@ -101,8 +100,6 @@ extension ImagesListViewController: ImagesListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let photo = photos[indexPath.row]
-        print("button like tapped")
-//         Покажем лоадер
         UIBlockingProgressHUD.show()
         imageListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { result in
             switch result {
@@ -111,13 +108,10 @@ extension ImagesListViewController: ImagesListCellDelegate {
                 self.photos = self.imageListService.photos
                 // Изменим индикацию лайка картинки
                 cell.update(photo: self.photos[indexPath.row])
-                // Уберём лоадер
                 UIBlockingProgressHUD.dismiss()
             case .failure:
-                // Уберём лоадер
                 UIBlockingProgressHUD.dismiss()
-                // Покажем, что что-то пошло не так
-                self.alertPresenter.showErrorAlert(message: "Error", action: { })
+                self.alertPresenter.showErrorAlert(message: "Что-то пошло не так(", action: { })
             }
         }
     }

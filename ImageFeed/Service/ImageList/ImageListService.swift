@@ -42,7 +42,6 @@ final class ImagesListService {
             guard let self = self else { return }
             switch result {
             case .success(let models):
-                print("Получен список, изображений \(models.count) штук")
                 var nextPagePhotos: [Photo] = []
                 for model in models {
                     let photo = Photo(photoResult: model)
@@ -76,7 +75,6 @@ final class ImagesListService {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.httpMethod = isLike ? "POST" : "DELETE"
 
-        print("like change = \(isLike). URL = \(url)")
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<LikeResult, Error>) in
             guard let self = self else { return }
             switch result {
