@@ -150,7 +150,7 @@
         <!--Splash View Controller-->
         <scene sceneID="Ab8-eZ-B3N">
             <objects>
-                <viewController id="FrH-xZ-KwR" customClass="SplashViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SplashViewController" id="FrH-xZ-KwR" customClass="SplashViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="215-pX-5c7">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

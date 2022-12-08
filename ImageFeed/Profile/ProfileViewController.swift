@@ -7,11 +7,13 @@
 
 import UIKit
 import Kingfisher
+import WebKit
 
 final class ProfileViewController: UIViewController {
 
     // MARK: - Properties
     private let profileService = ProfileService.shared
+    private let tokenStorage = OAuth2TokenStorage()
 
     @IBOutlet private var avatarImageView: UIImageView!
     @IBOutlet private var nameLabel: UILabel!
@@ -26,6 +28,9 @@ final class ProfileViewController: UIViewController {
     }
     // MARK: - Methods
     @IBAction private func didTapLogoutButton(_ sender: UIButton) {
+        tokenStorage.removeToken()
+        cleanCookie()
+        switchToSplashController()
     }
 
     private func addObserverAvatarURL() {
@@ -57,5 +62,28 @@ final class ProfileViewController: UIViewController {
         nameLabel.text = profile.name
         loginNameLabel.text = profile.loginName
         descriptionLabel.text = profile.bio
+    }
+
+    private func switchToSplashController() {
+            guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+
+            // Cоздаём экземпляр нужного контроллера из Storyboard с помощью ранее заданного идентификатора.
+            let splashController = UIStoryboard(name: "Main", bundle: .main)
+                .instantiateViewController(withIdentifier: "SplashViewController")
+
+            // Установим в `rootViewController` полученный контроллер
+            window.rootViewController = splashController
+        }
+
+    private func cleanCookie() {
+       // Очищаем все куки из хранилища.
+       HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+       // Запрашиваем все данные из локального хранилища.
+       WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+          // Массив полученных записей удаляем из хранилища.
+          records.forEach { record in
+             WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+          }
+       }
     }
 }
