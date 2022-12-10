@@ -27,7 +27,7 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var scrollView: UIScrollView!
 
-    private let minZoomScale = 1.0
+    private let minZoomScale = 0.1
     private let maxZoomScale = 1.25
 
     // MARK: - LifeCycle
@@ -78,7 +78,7 @@ final class SingleImageViewController: UIViewController {
         let hScale = visibleRectSize.width / imageSize.width
         let vScale = visibleRectSize.height / imageSize.height
         let scale = min(maxZoomScale, max(minZoomScale, max(hScale, vScale)))
-        scrollView.bounds.size = visibleRectSize
+//        scrollView.bounds.size = visibleRectSize
         scrollView.setZoomScale(scale, animated: false)
         scrollView.layoutIfNeeded()
         let newContentSize = scrollView.contentSize
@@ -95,26 +95,26 @@ extension SingleImageViewController: UIScrollViewDelegate {
         imageView
     }
 
-//    func centerImage() {
-//        let boundsSize = scrollView.bounds.size
-//        var frameToCenter = imageView.frame
-//
-//        if frameToCenter.size.width < boundsSize.width {
-//            frameToCenter.origin.x = (boundsSize.width - frameToCenter.size.width) / 2
-//        } else {
-//            frameToCenter.origin.x = 0
-//        }
-//
-//        if frameToCenter.size.height < boundsSize.height {
-//            frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2
-//        } else {
-//            frameToCenter.origin.y = 0
-//        }
-//
-//        imageView.frame = frameToCenter
-//    }
-//
-//    func scrollViewDidZoom(_ scrollView: UIScrollView) {
-//            self.centerImage()
-//        }
+    func centerImage() {
+        let boundsSize = scrollView.bounds.size
+        var frameToCenter = imageView.frame
+
+        if frameToCenter.size.width < boundsSize.width {
+            frameToCenter.origin.x = (boundsSize.width - frameToCenter.size.width) / 2
+        } else {
+            frameToCenter.origin.x = 0
+        }
+
+        if frameToCenter.size.height < boundsSize.height {
+            frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2
+        } else {
+            frameToCenter.origin.y = 0
+        }
+
+        imageView.frame = frameToCenter
+    }
+
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            self.centerImage()
+        }
 }
