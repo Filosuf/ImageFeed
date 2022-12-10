@@ -25,10 +25,7 @@ extension URLSession {
                 completion(.failure(NetworkError.responseError))
                 return
             }
-
-            if let response = response as? HTTPURLResponse {
-                print(response.statusCode)
-            }
+            
             // Декодируем полученные данные
             guard let data = data else { return }
             let resultDecoding: Result<T, Error> = self.decoding(data: data)

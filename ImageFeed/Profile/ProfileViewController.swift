@@ -14,6 +14,7 @@ final class ProfileViewController: UIViewController {
     // MARK: - Properties
     private let profileService = ProfileService.shared
     private let tokenStorage = OAuth2TokenStorage()
+    private lazy var alertPresenter = AlertPresenter(viewController: self)
 
     @IBOutlet private var avatarImageView: UIImageView!
     @IBOutlet private var nameLabel: UILabel!
@@ -28,9 +29,11 @@ final class ProfileViewController: UIViewController {
     }
     // MARK: - Methods
     @IBAction private func didTapLogoutButton(_ sender: UIButton) {
-        tokenStorage.removeToken()
-        cleanCookie()
-        switchToSplashController()
+        alertPresenter.showLogoutAlert {
+            self.tokenStorage.removeToken()
+            self.cleanCookie()
+            self.switchToSplashController()
+        }
     }
 
     private func addObserverAvatarURL() {

@@ -27,12 +27,14 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var scrollView: UIScrollView!
 
-    private let minZoomScale = 0.1
+    private let minZoomScale = 1.0
     private let maxZoomScale = 1.25
 
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
+//        scrollView.minimumZoomScale = 1
+//        scrollView.maximumZoomScale = 1.25
         getImage(with: fullImageUrl)
     }
 
@@ -52,8 +54,7 @@ final class SingleImageViewController: UIViewController {
     private func getImage(with url: String?) {
         guard let urlImage = url, let url = URL(string: urlImage) else { return }
 
-        let indicatorCustom = SingleImageIndicator()
-        imageView.kf.indicatorType = .custom(indicator: indicatorCustom)
+        UIBlockingProgressHUD.show()
 
         imageView.kf.setImage(with: url, placeholder: UIImage(named: "imagePlaceholder"), options: []) { [weak self] result in
             guard let self = self else { return }
@@ -61,6 +62,7 @@ final class SingleImageViewController: UIViewController {
             case .success(let data):
                 DispatchQueue.main.async {
                     self.image = data.image
+                    UIBlockingProgressHUD.dismiss()
                 }
             case .failure:
                 return
@@ -71,12 +73,12 @@ final class SingleImageViewController: UIViewController {
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         scrollView.minimumZoomScale = minZoomScale
         scrollView.maximumZoomScale = maxZoomScale
-        let visibleRectSize = scrollView.bounds.size
-        print(visibleRectSize)
+        let visibleRectSize = view.bounds.size
         let imageSize = image.size
         let hScale = visibleRectSize.width / imageSize.width
         let vScale = visibleRectSize.height / imageSize.height
         let scale = min(maxZoomScale, max(minZoomScale, max(hScale, vScale)))
+        scrollView.bounds.size = visibleRectSize
         scrollView.setZoomScale(scale, animated: false)
         scrollView.layoutIfNeeded()
         let newContentSize = scrollView.contentSize
@@ -84,6 +86,7 @@ final class SingleImageViewController: UIViewController {
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
+
 }
 
 // MARK: - UIScrollViewDelegate

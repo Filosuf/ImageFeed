@@ -36,6 +36,7 @@ final class ImagesListCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+        selectionStyle = .none
     }
 
     @IBAction func likeButtonClicked(_ sender: UIButton) {
