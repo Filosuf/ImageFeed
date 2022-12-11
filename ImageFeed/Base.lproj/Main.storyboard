@@ -150,7 +150,7 @@
         <!--Splash View Controller-->
         <scene sceneID="Ab8-eZ-B3N">
             <objects>
-                <viewController id="FrH-xZ-KwR" customClass="SplashViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SplashViewController" id="FrH-xZ-KwR" customClass="SplashViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="215-pX-5c7">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -216,6 +216,9 @@
                                                     </constraints>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="favorites.fill"/>
+                                                    <connections>
+                                                        <action selector="likeButtonClicked:" destination="TKj-pT-fEr" eventType="touchUpInside" id="DNH-Bn-mxM"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -256,6 +259,7 @@
                     <tabBarItem key="tabBarItem" title="" image="tab_editorial_active" id="bbZ-5P-tbD"/>
                     <navigationItem key="navigationItem" id="wg3-HB-pyq"/>
                     <connections>
+                        <outlet property="tableView" destination="VDL-b5-AHQ" id="8IY-uX-BLG"/>
                         <segue destination="I2T-pb-lHc" kind="presentation" identifier="ShowSingleImage" id="j6z-LW-g33"/>
                     </connections>
                 </viewController>
@@ -271,15 +275,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="U5c-lJ-xyi">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U5c-lJ-xyi">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="wug-c8-mx3">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="wug-c8-mx3">
+                                        <rect key="frame" x="0.0" y="0.0" width="200" height="132"/>
                                     </imageView>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="wug-c8-mx3" secondAttribute="bottom" id="Jsg-13-Xs3"/>
+                                    <constraint firstAttribute="trailing" secondItem="wug-c8-mx3" secondAttribute="trailing" id="NC5-xK-Knl"/>
+                                    <constraint firstItem="wug-c8-mx3" firstAttribute="top" secondItem="U5c-lJ-xyi" secondAttribute="top" id="Ybk-TK-sFN"/>
+                                    <constraint firstItem="wug-c8-mx3" firstAttribute="leading" secondItem="U5c-lJ-xyi" secondAttribute="leading" id="mJZ-QN-rZM"/>
+                                </constraints>
                                 <viewLayoutGuide key="contentLayoutGuide" id="M1O-qi-bx0"/>
                                 <viewLayoutGuide key="frameLayoutGuide" id="DbA-1j-1Wr"/>
                                 <connections>
@@ -314,7 +322,11 @@
                         <constraints>
                             <constraint firstItem="nvw-iQ-mVy" firstAttribute="centerX" secondItem="cPZ-2y-jC9" secondAttribute="centerX" id="0U2-KA-knB"/>
                             <constraint firstItem="dka-Lx-Pxx" firstAttribute="top" secondItem="cPZ-2y-jC9" secondAttribute="top" constant="8" id="GcA-go-Sc9"/>
+                            <constraint firstAttribute="top" secondItem="U5c-lJ-xyi" secondAttribute="top" id="LM9-1O-joN"/>
+                            <constraint firstItem="cPZ-2y-jC9" firstAttribute="trailing" secondItem="U5c-lJ-xyi" secondAttribute="trailing" id="Mth-wx-lbV"/>
+                            <constraint firstItem="U5c-lJ-xyi" firstAttribute="leading" secondItem="cPZ-2y-jC9" secondAttribute="leading" id="aH5-UR-ifz"/>
                             <constraint firstItem="cPZ-2y-jC9" firstAttribute="bottom" secondItem="nvw-iQ-mVy" secondAttribute="bottom" constant="16" id="cEr-Ux-fD6"/>
+                            <constraint firstItem="U5c-lJ-xyi" firstAttribute="bottom" secondItem="fYh-dc-x2U" secondAttribute="bottom" id="dhI-7F-Tl7"/>
                             <constraint firstItem="dka-Lx-Pxx" firstAttribute="leading" secondItem="cPZ-2y-jC9" secondAttribute="leading" constant="8" id="uhv-Q4-qIr"/>
                         </constraints>
                     </view>
@@ -326,7 +338,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Zpd-Fa-QOg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1254" y="-650"/>
+            <point key="canvasLocation" x="1253.6231884057972" y="-650.22321428571422"/>
         </scene>
         <!--Profile View Controller-->
         <scene sceneID="dbi-1w-MKw">

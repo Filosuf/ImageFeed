@@ -25,6 +25,7 @@ extension URLSession {
                 completion(.failure(NetworkError.responseError))
                 return
             }
+            
             // Декодируем полученные данные
             guard let data = data else { return }
             let resultDecoding: Result<T, Error> = self.decoding(data: data)
@@ -42,7 +43,9 @@ extension URLSession {
 
     private func decoding<T: Decodable>(data: Data) -> Result<T, Error>{
         do {
-            let responseBody = try JSONDecoder().decode(T.self, from: data)
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            let responseBody = try decoder.decode(T.self, from: data)
             return .success(responseBody)
         } catch {
             return.failure(NetworkError.decodeError)

@@ -46,8 +46,6 @@ final class SplashViewController: UIViewController {
     // MARK: - Methods
     private func startApplication() {
         if let token = OAuth2TokenStorage().token {
-            //так как viewDidAppear срабатывает при изменении window.rootViewController, необходимо дополнительно скрыть индикатор
-            UIBlockingProgressHUD.show()
             getProfile(with: token)
         } else {
             performSegue(withIdentifier: showAuthVCIdentifier, sender: nil)
@@ -84,7 +82,7 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success(let accessToken):
                 OAuth2TokenStorage().token = accessToken
                 self.getProfile(with: accessToken)
-            case .failure(_):
+            case .failure:
                 UIBlockingProgressHUD.dismiss()
                 self.alertPresenter.showErrorAlert(message: "Не удалось войти в систему", action: { })
             }
@@ -93,6 +91,7 @@ extension SplashViewController: AuthViewControllerDelegate {
 
     ///Загрузка данных профиля пользователя
     private func getProfile(with token: String) {
+        UIBlockingProgressHUD.show()
         profileService.fetchProfile(token) { [weak self] result in
             guard let self = self else {return}
 
@@ -101,7 +100,8 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success(let profile):
                 ProfileImageService.shared.fetchProfileImageURL(username: profile.username, token: token) { _ in }
                 self.switchToTabBarController()
-            case .failure(_):
+            case .failure:
+                UIBlockingProgressHUD.dismiss()
                 self.alertPresenter.showErrorAlert(message: "Не удалось войти в систему", action: {})
             }
         }

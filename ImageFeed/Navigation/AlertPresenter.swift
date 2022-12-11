@@ -32,4 +32,26 @@ final class AlertPresenter {
         
         viewController.present(alert, animated: true, completion: nil)
     }
+
+    func showLogoutAlert(action: @escaping () -> Void) {
+        guard let viewController = viewController else { return }
+
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены что хотите выйти?",
+            preferredStyle: .alert)
+
+        alert.view.accessibilityIdentifier = "error_alert"
+
+        let action = UIAlertAction(title: "Выйти", style: .destructive) { _ in
+            action()
+        }
+
+        let cancel = UIAlertAction(title: "Отмена", style: .cancel)
+
+        alert.addAction(action)
+        alert.addAction(cancel)
+
+        viewController.present(alert, animated: true, completion: nil)
+    }
 }
