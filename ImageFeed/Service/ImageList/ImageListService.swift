@@ -15,6 +15,7 @@ final class ImagesListService {
     private var task: URLSessionTask?
     private var taskChangeLike: URLSessionTask?
     private var lastLoadedPage: Int?
+    private var loadPage: Int?
     private let tokenStorage = OAuth2TokenStorage()
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
 
@@ -28,8 +29,12 @@ final class ImagesListService {
         : lastLoadedPage! + 1
 
         assert(Thread.isMainThread)
+        if loadPage == nextPage { return }
         task?.cancel()
+        loadPage = nextPage
+        
         guard let token = tokenStorage.token else { return }
+        
         var urlComponents = URLComponents(string: defaultBaseUrl + "/photos")!
         urlComponents.queryItems = [
             URLQueryItem(name: "page", value: "\(nextPage)")
