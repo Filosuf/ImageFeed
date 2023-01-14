@@ -13,7 +13,6 @@ final class ImagesListViewController: UIViewController {
     // MARK: - Properties
     private let imageListService = ImagesListService.shared
     private let singleImageIdentifier = "ShowSingleImage"
-    private var photosName = [String]()
     private var photos = [Photo]()
     private lazy var alertPresenter = AlertPresenter(viewController: self)
 
@@ -22,7 +21,6 @@ final class ImagesListViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        photosName = Array(0..<20).map{ "\($0)" }
         imageListService.fetchPhotosNextPage()
         addObserver()
     }
