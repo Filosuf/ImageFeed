@@ -57,8 +57,24 @@ final class SplashViewController: UIViewController {
         guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
 
         // Cоздаём экземпляр нужного контроллера из Storyboard с помощью ранее заданного идентификатора.
-        let tabBarController = UIStoryboard(name: "Main", bundle: .main)
-            .instantiateViewController(withIdentifier: "TabBarViewController")
+//        let tabBarController = UIStoryboard(name: "Main", bundle: .main)
+//            .instantiateViewController(withIdentifier: "TabBarViewController")
+
+
+        //feature/ init TabBar
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarViewController") as! UITabBarController
+        //imageListViewController
+        let imageListViewController = storyboard.instantiateViewController(withIdentifier: "ImagesListViewController") as! ImagesListViewController
+        let imagesListViewPresenter = ImagesListViewPresenter()
+        imageListViewController.presenter = imagesListViewPresenter
+        imagesListViewPresenter.view = imageListViewController
+        //profileViewController
+        let profileViewController = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+        let profileViewPresenter = ProfileViewPresenter()
+        profileViewController.presenter = profileViewPresenter
+        profileViewPresenter.view = profileViewController
+        tabBarController.setViewControllers([imageListViewController, profileViewController], animated: true)
 
         // Установим в `rootViewController` полученный контроллер
         window.rootViewController = tabBarController

@@ -35,7 +35,7 @@ final class ImagesListService {
         
         guard let token = tokenStorage.token else { return }
         
-        var urlComponents = URLComponents(string: defaultBaseUrl + "/photos")!
+        var urlComponents = URLComponents(string: Constants.defaultBaseURL + "/photos")!
         urlComponents.queryItems = [
             URLQueryItem(name: "page", value: "\(nextPage)")
         ]
@@ -72,7 +72,7 @@ final class ImagesListService {
         taskChangeLike?.cancel()
 
         guard let token = tokenStorage.token else { return }
-        var url = URL(string: defaultBaseUrl)!
+        var url = URL(string: Constants.defaultBaseURL)!
         url.appendPathComponent("photos")
         url.appendPathComponent(photoId)
         url.appendPathComponent("like")
