@@ -23,6 +23,7 @@ final class ImagesListViewTests: XCTestCase {
         //then
         XCTAssertTrue(presenter.viewDidLoadCalled) //behaviour verification
     }
+}
 
 final class ImagesListViewPresenterSpy: ImagesListViewPresenterProtocol {
     var view: ImagesListViewControllerProtocol?
