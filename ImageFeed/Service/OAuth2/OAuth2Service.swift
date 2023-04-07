@@ -25,9 +25,9 @@ final class OAuth2Service: OAuth2ServiceProtocol {
     func fetchAuthToken(with code: String, completion: @escaping (Result<String, Error>) -> Void) {
         var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")!
         urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: accessKey),
-            URLQueryItem(name: "client_secret", value: secretKey),
-            URLQueryItem(name: "redirect_uri", value: redirectURI),
+            URLQueryItem(name: "client_id", value: Constants.accessKey),
+            URLQueryItem(name: "client_secret", value: Constants.secretKey),
+            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
             URLQueryItem(name: "code", value: code),
             URLQueryItem(name: "grant_type", value: "authorization_code")
         ]
