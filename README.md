@@ -14,3 +14,5 @@
  - Переход с ветки авторизации на `tabBar` при наличии токена
  - Масштабированию изображения при отображении на `ScrollView`
  - Анимации плейсхолдеров при загрузке данных из интернета
+
+![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZDdlZjMxMGNmZmUzZWE4YjQ5MTQ3YmE0NWRkNWI2ZGUxZGVmNzg1MSZjdD1n/Vvh8HCJ2EOGev11mcp/giphy.gif)
